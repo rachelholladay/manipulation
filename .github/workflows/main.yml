@@ -44,6 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:18.04
     steps:
+      - name: env
+        run: env
+        shell: bash
       - name: check free space before
         run: df -h
         shell: bash
@@ -66,7 +69,39 @@ jobs:
       - name: post-checkout setup
         run: ./htmlbook/workflows/ci/bionic/setup
         shell: bash
-      - name: check free space during
+      - name: check free space during 1
+        run: df -h
+        shell: bash
+      - name: nuke half of drake
+        run: |
+          rm -rf \
+            /opt/drake/bin/drake-visualizer \
+            /opt/drake/bin/optitrack_client \
+            /opt/drake/bin/vtk*-8.2 \
+            /opt/drake/include/drake_lcmtypes \
+            /opt/drake/include/fmt \
+            /opt/drake/include/ibex \
+            /opt/drake/include/ibex.h \
+            /opt/drake/include/ignition-math6 \
+            /opt/drake/include/lcm \
+            /opt/drake/include/lcmtypes \
+            /opt/drake/include/pybind11 \
+            /opt/drake/include/spdlog \
+            /opt/drake/include/vtk-8.2 \
+            /opt/drake/lib/cmake \
+            /opt/drake/lib/ibex \
+            /opt/drake/lib/libddApp.so \
+            /opt/drake/lib/libPythonQt.so \
+            /opt/drake/lib/libvtk*Python36*-8.2.so* \
+            /opt/drake/lib/libvtkWrappingTools-8.2.a \
+            /opt/drake/lib/python3.6/site-packages/_drake_visualizer_builtin_scripts \
+            /opt/drake/lib/python3.6/site-packages/director \
+            /opt/drake/lib/python3.6/site-packages/optitrack \
+            /opt/drake/lib/python3.6/site-packages/urdf_parser_py \
+            /opt/drake/lib/python3.6/site-packages/vtk.py \
+            /opt/drake/lib/python3.6/site-packages/vtkmodules \
+            /opt/drake/share/doc
+      - name: check free space during 2
         run: df -h
         shell: bash
       - name: test
