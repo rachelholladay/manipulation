@@ -3,9 +3,11 @@
 # Copyright 2020 Massachusetts Institute of Technology.
 # Licensed under the BSD 3-Clause License. See LICENSE.TXT for details.
 
-set -euxo pipefail
+set -euo pipefail
 
 git submodule sync --recursive
-set +x
+
+readonly submodules_except_data=$(git config --file .gitmodules --name-only --get-regexp path | cut -d . -f 2 | sed /data/d)
+
 git -c "http.extraheader=$(git config --local --get http.https://github.com/.extraheader)" \
-  -c protocol.version=2 submodule update -f --depth 1 --init --recursive
+  -c protocol.version=2 submodule update -f --depth 1 --init --recursive -- ${submodules_except_data}
