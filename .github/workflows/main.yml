@@ -36,8 +36,6 @@ on:
       - reopened
       - synchronize
   push:
-    branches:
-      - master
   schedule:
     - cron: '0 8 * * *'
 jobs:
@@ -46,6 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     container: ubuntu:18.04
     steps:
+      - name: check free space before
+        run: df -h
+        shell: bash
       - name: pre-checkout setup
         run: |
           export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 DEBIAN_FRONTEND=noninteractive
@@ -65,13 +66,22 @@ jobs:
       - name: post-checkout setup
         run: ./htmlbook/workflows/ci/bionic/setup
         shell: bash
+      - name: check free space during
+        run: df -h
+        shell: bash
       - name: test
         run: ./htmlbook/workflows/ci/bionic/test
+        shell: bash
+      - name: check free space after
+        run: df -h
         shell: bash
   catalina:
     name: macos catalina 10.15
     runs-on: macos-10.15
     steps:
+      - name: check free space before
+        run: df -h
+        shell: zsh -efuo pipefail {0}
       - name: checkout
         uses: actions/checkout@v2
       - name: submodule checkout
@@ -80,7 +90,13 @@ jobs:
       - name: setup
         run: ./htmlbook/workflows/ci/catalina/setup
         shell: zsh -efuo pipefail {0}
+      - name: check free space during
+        run: df -h
+        shell: zsh -efuo pipefail {0}
       - name: test
         run: ./htmlbook/workflows/ci/catalina/test
+        shell: zsh -efuo pipefail {0}
+      - name: check free space after
+        run: df -h
         shell: zsh -efuo pipefail {0}
 ...
